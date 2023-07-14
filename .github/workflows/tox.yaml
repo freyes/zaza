@@ -36,6 +36,7 @@ jobs:
       matrix:
         juju_channel:
           - 2.9/stable
+          - 3.1/stable
         bundle:
           - first
           - second
@@ -50,7 +51,7 @@ jobs:
         set -euxo pipefail
         python -m pip install --upgrade pip
         pip install tox tox-gh-actions
-        sudo snap install --channel ${{ matrix.juju_channel }} --classic juju
+        sudo snap install --channel ${{ matrix.juju_channel }} juju
         sudo snap install --classic juju-crashdump
         sudo lxd init --auto
         # This is a throw-away CI environment, do not do this at home
@@ -64,7 +65,7 @@ jobs:
         lxc image copy --alias juju/focal/amd64 --copy-aliases ubuntu-daily:focal local:
         lxc image copy --alias juju/jammy/amd64 --copy-aliases ubuntu-daily:jammy local:
         lxc image list
-        juju bootstrap --no-gui localhost
+        juju bootstrap localhost
     - name: Functional test
       run: |
         set -euxo pipefail
