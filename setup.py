@@ -36,7 +36,6 @@ install_require = [
 
     'hvac<0.7.0',
     'jinja2',
-    'juju<3.2',
     'juju-wait',
     'PyYAML',
     'tenacity>8.2.0',
@@ -46,6 +45,12 @@ install_require = [
 tests_require = [
     'tox >= 2.3.1',
 ]
+
+extras_require={
+    'testing': tests_require,
+    'juju-29': ['juju<3.0'],
+    'juju-31': ['juju>=3.1.0,<3.2.0'],
+}
 
 
 class Tox(TestCommand):
@@ -110,8 +115,6 @@ setup(
     zip_safe=False,
     cmdclass={'test': Tox},
     install_requires=install_require,
-    extras_require={
-        'testing': tests_require,
-    },
     tests_require=tests_require,
+    extras_require=extras_require,
 )
