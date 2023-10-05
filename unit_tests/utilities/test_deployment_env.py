@@ -62,13 +62,38 @@ class TestUtilitiesDeploymentEnv(ut_utils.BaseTestCase):
             self.assertEqual(deployment_env.get_overlay_ppas(),
                              ro_types.ReadOnlyList(['ppa:ppa1', 'ppa:ppa2']))
 
+            config = collections.OrderedDict({'model_alias': {'overlay_ppas':
+                                              ['ppa:ppa1', 'ppa:ppa2']}})
+            get_options_mock.return_value = ro_types.resolve_immutable(config)
+            self.assertEqual(deployment_env.get_overlay_ppas('model_alias'),
+                             ro_types.ReadOnlyList(['ppa:ppa1', 'ppa:ppa2']))
+
             config = collections.OrderedDict({'force_deploy': 'x-y'})
             get_options_mock.return_value = ro_types.resolve_immutable(config)
             self.assertEqual(deployment_env.get_overlay_ppas(), None)
 
     def test_get_cloudinit_userdata(self):
         with mock.patch.object(deployment_env, 'get_overlay_ppas',
+                               return_value=None):
+            preferences_file = "/etc/apt/preferences.d/proposed-updates"
+            cloud_config = {
+                'apt': {
+                    'sources': {}
+                },
+                'preruncmd': [
+                    f"echo 'Package: *' >> {preferences_file}",
+                    f"echo 'Pin: release a=*-proposed' >> {preferences_file}",
+                    f"echo 'Pin-Priority: 500' >> {preferences_file}",
+                ]
+            }
+            cloudinit_userdata = "#cloud-config\n{}".format(
+                yaml.safe_dump(cloud_config))
+            self.assertEqual(
+                deployment_env.get_cloudinit_userdata(),
+                cloudinit_userdata)
+        with mock.patch.object(deployment_env, 'get_overlay_ppas',
                                return_value=['ppa:ppa0', 'ppa:ppa1']):
+            preferences_file = "/etc/apt/preferences.d/proposed-updates"
             cloud_config = {
                 'apt': {
                     'sources': {
@@ -79,7 +104,12 @@ class TestUtilitiesDeploymentEnv(ut_utils.BaseTestCase):
                             'source': 'ppa:ppa1'
                         }
                     }
-                }
+                },
+                'preruncmd': [
+                    f"echo 'Package: *' >> {preferences_file}",
+                    f"echo 'Pin: release a=*-proposed' >> {preferences_file}",
+                    f"echo 'Pin-Priority: 500' >> {preferences_file}",
+                ]
             }
             cloudinit_userdata = "#cloud-config\n{}".format(
                 yaml.safe_dump(cloud_config))

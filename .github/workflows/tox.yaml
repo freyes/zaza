@@ -24,7 +24,7 @@ jobs:
     - name: Lint with tox
       run: tox -e pep8
     - name: Test with tox
-      run: tox -e py
+      run: tox -e py3
     - name: Codecov
       run: |
         set -euxo pipefail
@@ -96,3 +96,6 @@ jobs:
       with:
         name: test-run-logs-and-crashdump
         path: logs/
+    - name: consider debugging
+      uses: lhotari/action-upterm@v1
+      if: failure()
