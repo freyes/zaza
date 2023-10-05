@@ -40,6 +40,7 @@ install_require = [
     'PyYAML',
     'tenacity>8.2.0',
     'python-libmaas',
+    'juju',
 ]
 
 tests_require = [
@@ -48,10 +49,6 @@ tests_require = [
 
 extras_require={
     'testing': tests_require,
-    '': ['juju'],
-    'juju-29': ['juju<3.0'],
-    'juju-31': ['juju>=3.1.0,<3.2.0'],
-    'juju-32': ['juju>=3.2.0,<3.3.0'],
 }
 
 
