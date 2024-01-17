@@ -1,5 +1,5 @@
 aiounittest
-flake8>=2.2.4
+flake8>=6.0.0,<7.0.0
 flake8-docstrings
 flake8-per-file-ignores
 pydocstyle<4.0.0
